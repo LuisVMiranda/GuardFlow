@@ -57,3 +57,28 @@ Use `start_guardflow.bat` to run GuardFlow without opening a terminal:
    - start `guardflow_app.py`
 
 If Python is missing, the script will show an error and pause so you can read it.
+
+
+## Troubleshooting: "file path is invalid or not accessible"
+If PDF/ZIP scans show the same red path error:
+- Use **Browse…** in the Scan tab instead of drag-drop (some runtimes do not expose absolute path on dropped files).
+- Confirm the path is absolute and file exists.
+- Open **Refresh Backend Status** and verify detected MalwareZoo compatibility paths (health/hash/upload).
+
+## MalwareZoo compatibility check (important)
+GuardFlow now probes candidate paths and reports which endpoints are detected at runtime.
+If your MalwareZoo image uses different routes, edit these lists in `guardflow_app.py`:
+- `HEALTH_PATH_CANDIDATES`
+- `HASH_PATH_CANDIDATES`
+- `UPLOAD_PATH_CANDIDATES`
+
+## Queueing, throttling, and pause controls
+- API scanner calls run through an internal queue + worker threads.
+- System scans are throttled by default to reduce I/O pressure.
+- Use **Pause All Scans** / **Resume Scans** in the UI to control all active and queued scanning tasks.
+
+Environment knobs:
+- `GUARDFLOW_SCAN_WORKERS` (default `2`)
+- `GUARDFLOW_THROTTLE_SYSTEM_DELAY_S` (default `0.03`)
+- `GUARDFLOW_THROTTLE_FOLDER_DELAY_S` (default `0.005`)
+- `GUARDFLOW_SYSTEM_MAX_FILES` (default `20000`)

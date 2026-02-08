@@ -5,331 +5,116 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GuardFlow</title>
   <style>
-    :root {
-      --bg: #0f1115;
-      --card: #171a21;
-      --text: #e8eef8;
-      --muted: #9db0cc;
-      --accent: #5ea0ff;
-      --safe: #18be74;
-      --warn: #e6b422;
-      --danger: #ff5d73;
-      --border: #2a3140;
-    }
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #f6f8fc;
-        --card: #ffffff;
-        --text: #1f2937;
-        --muted: #6b7280;
-        --accent: #2563eb;
-        --safe: #059669;
-        --warn: #b7791f;
-        --danger: #dc2626;
-        --border: #e5e7eb;
-      }
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Inter, Segoe UI, Roboto, system-ui, sans-serif;
-    }
-    .app { max-width: 1150px; margin: 18px auto; padding: 16px; }
-    .header { margin-bottom: 14px; }
-    .subtitle { color: var(--muted); }
-    .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
-    .tab-btn {
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 9px 14px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .tab-btn.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-    .hidden { display: none !important; }
-    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    input, select, button {
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text);
-      border-radius: 10px;
-      padding: 9px 12px;
-    }
-    button { cursor: pointer; }
-    .primary { border-color: var(--accent); background: var(--accent); color: #fff; }
-    .danger { border-color: var(--danger); background: var(--danger); color: #fff; }
-
-    .dropzone {
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 34px;
-      text-align: center;
-      color: var(--muted);
-      margin: 10px 0;
-      transition: 0.2s ease;
-    }
-    .dropzone.drag { border-color: var(--accent); color: var(--text); }
-
-    .status { margin-top: 12px; padding: 12px; border-radius: 10px; font-weight: 600; }
-    .status.safe { background: color-mix(in oklab, var(--safe) 22%, transparent); color: var(--safe); }
-    .status.unknown { background: color-mix(in oklab, var(--warn) 22%, transparent); color: var(--warn); }
-    .status.threat { background: color-mix(in oklab, var(--danger) 22%, transparent); color: var(--danger); }
-    .status.error { background: #7f1d1d33; color: #ff9ca8; }
-
-    .metrics { display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 10px; margin-bottom: 10px; }
-    .metric { border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
-    .metric .label { color: var(--muted); font-size: .85rem; }
-    .metric .value { font-weight: 700; font-size: 1.2rem; margin-top: 4px; }
-
-    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
-    th, td { border-bottom: 1px solid var(--border); padding: 9px; text-align: left; }
-    .badge { border-radius: 999px; padding: 3px 8px; font-size: .76rem; font-weight: 700; }
-    .badge.safe { background: #00aa6640; color: var(--safe); }
-    .badge.unknown { background: #e6b42240; color: var(--warn); }
-    .badge.threat { background: #ff5d7340; color: var(--danger); }
-    .badge.error { background: #b91c1c40; color: #ff9ca8; }
+    :root{--bg:#0f1115;--card:#171a21;--text:#e8eef8;--muted:#9db0cc;--accent:#5ea0ff;--safe:#18be74;--warn:#e6b422;--danger:#ff5d73;--border:#2a3140}
+    @media (prefers-color-scheme:light){:root{--bg:#f6f8fc;--card:#fff;--text:#1f2937;--muted:#6b7280;--accent:#2563eb;--safe:#059669;--warn:#b7791f;--danger:#dc2626;--border:#e5e7eb}}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Roboto,system-ui,sans-serif}
+    .app{max-width:1160px;margin:18px auto;padding:16px}.subtitle{color:var(--muted)} .tabs{display:flex;gap:8px;margin-bottom:14px}
+    .tab-btn,button,input,select{border:1px solid var(--border);background:transparent;color:var(--text);border-radius:10px;padding:9px 12px}
+    .tab-btn{cursor:pointer;font-weight:600}.tab-btn.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+    button{cursor:pointer}.primary{border-color:var(--accent);background:var(--accent);color:#fff}.danger{border-color:var(--danger);background:var(--danger);color:#fff}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}.hidden{display:none!important}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.dropzone{border:2px dashed var(--border);border-radius:12px;padding:30px;text-align:center;color:var(--muted);margin:10px 0}.dropzone.drag{border-color:var(--accent);color:var(--text)}
+    .status{margin-top:12px;padding:12px;border-radius:10px;font-weight:600}.status.safe{background:#00aa662f;color:var(--safe)}.status.unknown{background:#e6b4222f;color:var(--warn)}.status.threat{background:#ff5d732f;color:var(--danger)}.status.error{background:#7f1d1d33;color:#ff9ca8}
+    .pill{padding:4px 9px;border-radius:999px;border:1px solid var(--border);font-size:.82rem}.pill.on{border-color:var(--danger);color:var(--danger)}
+    .metrics{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:10px}.metric{border:1px solid var(--border);border-radius:10px;padding:12px}.metric .label{color:var(--muted);font-size:.85rem}.metric .value{font-size:1.2rem;font-weight:700}
+    table{width:100%;border-collapse:collapse;font-size:.9rem} th,td{border-bottom:1px solid var(--border);padding:9px;text-align:left}
+    .badge{border-radius:999px;padding:3px 8px;font-size:.76rem;font-weight:700}.badge.safe{background:#00aa6640;color:var(--safe)}.badge.unknown{background:#e6b42240;color:var(--warn)}.badge.threat{background:#ff5d7340;color:var(--danger)}.badge.error{background:#b91c1c40;color:#ff9ca8}
+    .code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.82rem}
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="header">
-      <h1>🛡️ GuardFlow</h1>
-      <div class="subtitle">Privacy-first malware scanner for local MalwareZoo (hash-only by default).</div>
-    </div>
+<div class="app">
+  <h1>🛡️ GuardFlow</h1>
+  <p class="subtitle">Privacy-first local scanner (hash-only by default) with queueing, throttling, and pause controls.</p>
+  <div class="row" style="margin-bottom:10px">
+    <span id="pauseState" class="pill">Scanning Active</span>
+    <button id="pauseAll" class="danger">Pause All Scans</button>
+    <button id="resumeAll">Resume Scans</button>
+    <button id="refreshBackend">Refresh Backend Status</button>
+  </div>
+  <div id="backendStatus" class="subtitle code" style="margin-bottom:14px"></div>
 
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="scan">Scan</button>
-      <button class="tab-btn" data-tab="schedule">Schedule</button>
-      <button class="tab-btn" data-tab="reports">Reports</button>
-    </div>
-
-    <section id="tab-scan" class="card">
-      <h2>Scan</h2>
-      <p class="subtitle">Drop file path or paste full path. Only SHA-256 is sent unless you click "Upload for Deep Scan".</p>
-      <div id="dropZone" class="dropzone">Drop a file here</div>
-      <div class="row">
-        <input id="scanPath" style="min-width:420px" placeholder="/path/to/file or C:\\path\\to\\file.exe" />
-        <button id="scanBtn" class="primary">Scan (Hash Only)</button>
-      </div>
-      <div id="scanResult"></div>
-    </section>
-
-    <section id="tab-schedule" class="card hidden">
-      <h2>Schedule</h2>
-      <div class="row">
-        <select id="targetType">
-          <option value="file">Specific File</option>
-          <option value="folder">Specific Folder</option>
-          <option value="system">System-Wide</option>
-        </select>
-        <input id="targetPath" style="min-width:420px" placeholder="Target path (not required for system-wide)" />
-      </div>
-      <div class="row" style="margin-top:10px">
-        <select id="frequency">
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="every_x_hours">Every X Hours</option>
-        </select>
-        <input id="everyHours" type="number" min="1" value="6" style="width:130px" />
-        <button id="createSchedule" class="primary">Create Schedule</button>
-        <button id="runNow">Run Once Now</button>
-      </div>
-      <div id="scheduleMessage" class="subtitle" style="margin-top:10px"></div>
-      <div style="margin-top:10px">
-        <div class="row">
-          <button id="refreshJobs">Refresh Jobs</button>
-        </div>
-        <div id="jobList" class="subtitle" style="margin-top:8px"></div>
-      </div>
-    </section>
-
-    <section id="tab-reports" class="card hidden">
-      <h2>Reports (Last 30 Days)</h2>
-      <div class="metrics">
-        <div class="metric"><div class="label">Total Scanned</div><div id="metricTotal" class="value">0</div></div>
-        <div class="metric"><div class="label">Threats Neutralized</div><div id="metricThreat" class="value">0</div></div>
-        <div class="metric"><div class="label">Safety Score</div><div id="metricSafety" class="value">100%</div></div>
-      </div>
-      <button id="refreshReports">Refresh Reports</button>
-      <div style="overflow:auto; margin-top:10px">
-        <table>
-          <thead>
-            <tr>
-              <th>Time (UTC)</th><th>Path</th><th>SHA-256</th><th>Result</th><th>Detail</th><th>Source</th>
-            </tr>
-          </thead>
-          <tbody id="reportRows"></tbody>
-        </table>
-      </div>
-    </section>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="scan">Scan</button>
+    <button class="tab-btn" data-tab="schedule">Schedule</button>
+    <button class="tab-btn" data-tab="reports">Reports</button>
   </div>
 
-<script>
-const $ = (s) => document.querySelector(s);
-let lastScannedFile = "";
+  <section id="tab-scan" class="card">
+    <h2>Scan</h2>
+    <p class="subtitle">Tip: for PDFs/ZIPs, use Browse to ensure an absolute file path is passed from desktop host.</p>
+    <div id="dropZone" class="dropzone">Drop a file here (path support depends on runtime)</div>
+    <div class="row">
+      <input id="scanPath" style="min-width:430px" placeholder="Absolute file path" />
+      <button id="browseBtn">Browse…</button>
+      <button id="scanBtn" class="primary">Scan (Hash Only)</button>
+    </div>
+    <div id="scanResult"></div>
+  </section>
 
-// Tabs
-for (const btn of document.querySelectorAll('.tab-btn')) {
-  btn.addEventListener('click', async () => {
-    for (const b of document.querySelectorAll('.tab-btn')) b.classList.remove('active');
-    btn.classList.add('active');
-    ['scan', 'schedule', 'reports'].forEach(t => $(`#tab-${t}`).classList.add('hidden'));
-    $(`#tab-${btn.dataset.tab}`).classList.remove('hidden');
-    if (btn.dataset.tab === 'reports') await loadReports();
-    if (btn.dataset.tab === 'schedule') await loadJobs();
-  });
-}
-
-// Scan tab
-const dropZone = $('#dropZone');
-['dragenter', 'dragover'].forEach(ev => dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.add('drag'); }));
-['dragleave', 'drop'].forEach(ev => dropZone.addEventListener(ev, e => { e.preventDefault(); dropZone.classList.remove('drag'); }));
-
-dropZone.addEventListener('drop', async (e) => {
-  const f = e.dataTransfer.files && e.dataTransfer.files[0];
-  if (!f) return;
-  const path = f.path || f.name;
-  $('#scanPath').value = path;
-  await doScan(path);
-});
-
-$('#scanBtn').addEventListener('click', async () => {
-  const p = $('#scanPath').value.trim();
-  if (!p) return;
-  await doScan(p);
-});
-
-async function doScan(path) {
-  const out = $('#scanResult');
-  out.innerHTML = `<div class="status">Scanning…</div>`;
-
-  const res = await window.pywebview.api.scan_file(path);
-  if (!res.ok) {
-    out.innerHTML = `<div class="status error">❌ ${esc(res.error || 'Scan failed.')}</div>`;
-    return;
-  }
-
-  lastScannedFile = res.file;
-  let cls = 'unknown', icon = '🟡';
-  if (res.status === 'SAFE') { cls = 'safe'; icon = '🟢'; }
-  else if (res.status === 'THREAT') { cls = 'threat'; icon = '🔴'; }
-  else if (res.status === 'ERROR') { cls = 'error'; icon = '❌'; }
-
-  out.innerHTML = `
-    <div class="status ${cls}">
-      ${icon} ${esc(res.status)} — ${esc(res.detail || '')}<br/>
-      <small>${esc(res.file)}<br/>SHA-256: <code>${esc(res.sha256 || '')}</code></small>
+  <section id="tab-schedule" class="card hidden">
+    <h2>Schedule</h2>
+    <div class="row">
+      <select id="targetType"><option value="file">Specific File</option><option value="folder">Specific Folder</option><option value="system">System-Wide</option></select>
+      <input id="targetPath" style="min-width:430px" placeholder="Target path (not required for system-wide)" />
     </div>
     <div class="row" style="margin-top:10px">
-      <button id="deepScanBtn">Upload for Deep Scan</button>
-      ${res.canDelete ? '<button id="deleteBtn" class="danger">Delete File</button>' : ''}
+      <select id="frequency"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="every_x_hours">Every X Hours</option></select>
+      <input id="everyHours" type="number" min="1" value="6" style="width:130px" />
+      <button id="createSchedule" class="primary">Create Schedule</button>
+      <button id="runNow">Run Once Now</button>
     </div>
-  `;
+    <div id="scheduleMessage" class="subtitle" style="margin-top:10px"></div>
+    <button id="refreshJobs" style="margin-top:10px">Refresh Jobs</button>
+    <div id="jobList" class="subtitle" style="margin-top:8px"></div>
+  </section>
 
-  $('#deepScanBtn').onclick = async () => {
-    const c = confirm('This will upload file contents to local MalwareZoo for deep scan. Continue?');
-    if (!c) return;
-    const up = await window.pywebview.api.upload_for_deep_scan(lastScannedFile);
-    alert(up.ok ? `Deep scan result: ${up.status}\n${up.detail}` : `Deep scan failed: ${up.error}`);
-  };
+  <section id="tab-reports" class="card hidden">
+    <h2>Reports (Last 30 Days)</h2>
+    <div class="metrics">
+      <div class="metric"><div class="label">Total Scanned</div><div id="metricTotal" class="value">0</div></div>
+      <div class="metric"><div class="label">Threats Neutralized</div><div id="metricThreat" class="value">0</div></div>
+      <div class="metric"><div class="label">Safety Score</div><div id="metricSafety" class="value">100%</div></div>
+    </div>
+    <button id="refreshReports" style="margin-top:10px">Refresh Reports</button>
+    <div style="overflow:auto; margin-top:10px"><table><thead><tr><th>Time (UTC)</th><th>Path</th><th>SHA-256</th><th>Result</th><th>Detail</th><th>Source</th></tr></thead><tbody id="reportRows"></tbody></table></div>
+  </section>
+</div>
+<script>
+const $=(s)=>document.querySelector(s); let lastScannedFile='';
 
-  if ($('#deleteBtn')) {
-    $('#deleteBtn').onclick = async () => {
-      const c = confirm('Move this file to Trash/Recycle Bin?');
-      if (!c) return;
-      const del = await window.pywebview.api.delete_file(lastScannedFile);
-      alert(del.ok ? 'File moved to trash.' : `Delete failed: ${del.error}`);
-    };
-  }
+for(const btn of document.querySelectorAll('.tab-btn')){btn.addEventListener('click',async()=>{for(const b of document.querySelectorAll('.tab-btn')) b.classList.remove('active'); btn.classList.add('active'); ['scan','schedule','reports'].forEach(t=>$("#tab-"+t).classList.add('hidden')); $("#tab-"+btn.dataset.tab).classList.remove('hidden'); if(btn.dataset.tab==='reports') await loadReports(); if(btn.dataset.tab==='schedule') await loadJobs();});}
+
+$('#browseBtn').addEventListener('click', async()=>{const r=await window.pywebview.api.pick_file(); if(r.ok){$('#scanPath').value=r.path;} else if(r.error!=='No file selected.'){alert(r.error)}});
+const dropZone=$('#dropZone'); ['dragenter','dragover'].forEach(ev=>dropZone.addEventListener(ev,e=>{e.preventDefault();dropZone.classList.add('drag')})); ['dragleave','drop'].forEach(ev=>dropZone.addEventListener(ev,e=>{e.preventDefault();dropZone.classList.remove('drag')}));
+dropZone.addEventListener('drop',async(e)=>{const f=e.dataTransfer.files&&e.dataTransfer.files[0]; if(!f) return; if(!f.path){$('#scanResult').innerHTML='<div class="status error">Dropped file path is unavailable in this runtime. Use Browse for local absolute path.</div>'; return;} $('#scanPath').value=f.path; await doScan(f.path);});
+$('#scanBtn').addEventListener('click', async()=>{const p=$('#scanPath').value.trim(); if(!p) return; await doScan(p);});
+
+async function doScan(path){ const out=$('#scanResult'); out.innerHTML='<div class="status">Scanning…</div>'; const res=await window.pywebview.api.scan_file(path); if(!res.ok){out.innerHTML=`<div class="status error">❌ ${esc(res.error||'Scan failed')}</div>`; return;} lastScannedFile=res.file; let cls='unknown',icon='🟡'; if(res.status==='SAFE'){cls='safe';icon='🟢';} else if(res.status==='THREAT'){cls='threat';icon='🔴';} else if(res.status==='ERROR'){cls='error';icon='❌';}
+  out.innerHTML=`<div class="status ${cls}">${icon} ${esc(res.status)} — ${esc(res.detail||'')}<br><small>${esc(res.file)}<br>SHA-256: <code>${esc(res.sha256||'')}</code></small></div><div class="row" style="margin-top:10px"><button id="deepScanBtn">Upload for Deep Scan</button>${res.canDelete?'<button id="deleteBtn" class="danger">Delete File</button>':''}</div>`;
+  $('#deepScanBtn').onclick=async()=>{if(!confirm('Upload file contents for deep scan?')) return; const up=await window.pywebview.api.upload_for_deep_scan(lastScannedFile); alert(up.ok?`Deep scan: ${up.status}\n${up.detail}`:`Deep scan failed: ${up.error}`)};
+  if($('#deleteBtn')) $('#deleteBtn').onclick=async()=>{if(!confirm('Move file to Trash/Recycle Bin?')) return; const d=await window.pywebview.api.delete_file(lastScannedFile); alert(d.ok?'File moved to trash.':`Delete failed: ${d.error}`)};
 }
 
-// Schedule tab
-$('#createSchedule').addEventListener('click', async () => {
-  const targetType = $('#targetType').value;
-  const targetPath = $('#targetPath').value.trim();
-  const frequency = $('#frequency').value;
-  const everyHours = Number($('#everyHours').value || 6);
+$('#pauseAll').addEventListener('click', async()=>{await window.pywebview.api.pause_all_scans(); await refreshBackendStatus();});
+$('#resumeAll').addEventListener('click', async()=>{await window.pywebview.api.resume_all_scans(); await refreshBackendStatus();});
+$('#refreshBackend').addEventListener('click', refreshBackendStatus);
 
-  const res = await window.pywebview.api.schedule_scan(targetType, targetPath, frequency, everyHours);
-  $('#scheduleMessage').textContent = res.ok ? `Scheduled: ${res.jobId}` : `Failed: ${res.error}`;
-  await loadJobs();
-});
-
-$('#runNow').addEventListener('click', async () => {
-  const targetType = $('#targetType').value;
-  const targetPath = $('#targetPath').value.trim();
-  const res = await window.pywebview.api.run_scheduled_now(targetType, targetPath);
-  $('#scheduleMessage').textContent = res.ok ? `Manual scheduled run finished. Scanned: ${res.scanned}` : `Failed: ${res.error}`;
-  await loadReports();
-});
-
+$('#createSchedule').addEventListener('click', async()=>{const targetType=$('#targetType').value; const targetPath=$('#targetPath').value.trim(); const frequency=$('#frequency').value; const everyHours=Number($('#everyHours').value||6); const res=await window.pywebview.api.schedule_scan(targetType,targetPath,frequency,everyHours); $('#scheduleMessage').textContent=res.ok?`Scheduled: ${res.jobId}`:`Failed: ${res.error}`; await loadJobs();});
+$('#runNow').addEventListener('click', async()=>{const targetType=$('#targetType').value; const targetPath=$('#targetPath').value.trim(); const r=await window.pywebview.api.run_scheduled_now(targetType,targetPath); $('#scheduleMessage').textContent=r.ok?`Run complete. Scanned: ${r.scanned}`:`Failed: ${r.error}`; await loadReports();});
 $('#refreshJobs').addEventListener('click', loadJobs);
-async function loadJobs() {
-  const res = await window.pywebview.api.list_jobs();
-  if (!res.ok) {
-    $('#jobList').textContent = 'Unable to load scheduled jobs.';
-    return;
-  }
-  if (!res.jobs.length) {
-    $('#jobList').textContent = 'No jobs configured.';
-    return;
-  }
-  $('#jobList').innerHTML = res.jobs.map(j =>
-    `<div style="margin-bottom:6px"><code>${esc(j.id)}</code> — next run: ${esc(j.nextRun || 'n/a')} <button onclick="removeJob('${escJs(j.id)}')">Remove</button></div>`
-  ).join('');
-}
+async function loadJobs(){const res=await window.pywebview.api.list_jobs(); if(!res.ok){$('#jobList').textContent='Unable to load jobs.'; return;} if(!res.jobs.length){$('#jobList').textContent='No jobs configured.'; return;} $('#jobList').innerHTML=res.jobs.map(j=>`<div style="margin-bottom:6px"><code>${esc(j.id)}</code> — next run: ${esc(j.nextRun||'n/a')} <button onclick="removeJob('${escJs(j.id)}')">Remove</button></div>`).join('');}
+async function removeJob(jobId){const r=await window.pywebview.api.remove_job(jobId); $('#scheduleMessage').textContent=r.ok?`Removed ${jobId}`:`Failed: ${r.error}`; await loadJobs();} window.removeJob=removeJob;
 
-async function removeJob(jobId) {
-  const res = await window.pywebview.api.remove_job(jobId);
-  $('#scheduleMessage').textContent = res.ok ? `Removed ${jobId}` : `Failed to remove: ${res.error}`;
-  await loadJobs();
-}
-window.removeJob = removeJob;
-
-// Reports tab
 $('#refreshReports').addEventListener('click', loadReports);
+async function loadReports(){const res=await window.pywebview.api.get_reports(); if(!res.ok) return; $('#metricTotal').textContent=String(res.summary.totalScanned); $('#metricThreat').textContent=String(res.summary.threatsNeutralized); $('#metricSafety').textContent=`${res.summary.safetyScore}%`; $('#reportRows').innerHTML=res.logs.map(l=>{const cls=(l.result||'UNKNOWN').toLowerCase(); const h=l.sha256?`${l.sha256.slice(0,16)}…`:''; return `<tr><td>${esc(l.timestamp||'')}</td><td title="${esc(l.filePath||'')}">${esc((l.filePath||'').slice(0,80))}</td><td><code>${esc(h)}</code></td><td><span class="badge ${cls}">${esc(l.result||'')}</span></td><td>${esc(l.detail||'')}</td><td>${esc(l.source||'')}</td></tr>`;}).join('');}
 
-async function loadReports() {
-  const res = await window.pywebview.api.get_reports();
-  if (!res.ok) return;
-  $('#metricTotal').textContent = String(res.summary.totalScanned);
-  $('#metricThreat').textContent = String(res.summary.threatsNeutralized);
-  $('#metricSafety').textContent = `${res.summary.safetyScore}%`;
+async function refreshBackendStatus(){const s=await window.pywebview.api.get_backend_status(); if(!s.ok) return; const c=s.compatibility||{}; $('#pauseState').textContent=s.paused?'Paused':'Scanning Active'; $('#pauseState').classList.toggle('on', !!s.paused); $('#backendStatus').textContent=`MalwareZoo: ${c.baseUrl || 'n/a'} | reachable=${c.reachable} | health=${c.healthPath || 'n/a'} | hash=${c.hashPath || 'n/a'} | upload=${c.uploadPath || 'n/a'} | queue=${s.queueSize} | throttle(system=${s.throttle.systemDelaySec}s, folder=${s.throttle.folderDelaySec}s)` + ((c.notes&&c.notes.length)?` | notes=${c.notes.join('; ')}`:'');}
 
-  $('#reportRows').innerHTML = res.logs.map(l => {
-    const cls = (l.result || 'UNKNOWN').toLowerCase();
-    const shortHash = l.sha256 ? `${l.sha256.slice(0, 16)}…` : '';
-    return `<tr>
-      <td>${esc(l.timestamp || '')}</td>
-      <td title="${esc(l.filePath || '')}">${esc((l.filePath || '').slice(0, 80))}</td>
-      <td><code>${esc(shortHash)}</code></td>
-      <td><span class="badge ${cls}">${esc(l.result || '')}</span></td>
-      <td>${esc(l.detail || '')}</td>
-      <td>${esc(l.source || '')}</td>
-    </tr>`;
-  }).join('');
-}
+function esc(v){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function escJs(v){return String(v).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
 
-function esc(v) {
-  return String(v).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function escJs(v) {
-  return String(v).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-}
-
-loadJobs();
-loadReports();
+refreshBackendStatus(); loadJobs(); loadReports();
 </script>
 </body>
 </html>

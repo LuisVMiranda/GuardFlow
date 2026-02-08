@@ -28,3 +28,10 @@
 - ensure `docker-compose.yml` exists
 - verify MalwareZoo health endpoint
 - optionally attempt `docker compose up -d` automatically
+
+
+## Reliability controls
+- Compatibility probing selects workable MalwareZoo health/hash/upload endpoints from candidate lists.
+- Scan API calls are executed via a queue + worker threads.
+- Throttling delays are applied for folder/system scans.
+- Global pause/resume event controls all scan execution paths.

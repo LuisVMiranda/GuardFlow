@@ -14,21 +14,33 @@ class GuardFlowTests(unittest.TestCase):
         self.api = app.GuardFlowAPI()
 
     def tearDown(self):
-        self.api.scheduler.shutdown(wait=False)
-        self.api.conn.close()
+        self.api.close()
         self.tmp.cleanup()
 
     def test_scan_file_hash_only_path_and_logging(self):
         sample = Path(self.tmp.name) / "sample.bin"
         sample.write_bytes(b"abc123")
 
-        self.api.requests = SimpleNamespace(post=lambda *args, **kwargs: SimpleNamespace(status_code=200, content=b"1", json=lambda: {"verdict": "safe", "detail": "ok"}))
+        self.api.requests = SimpleNamespace(
+            post=lambda *args, **kwargs: SimpleNamespace(status_code=200, content=b"1", json=lambda: {"verdict": "safe", "detail": "ok"}),
+            get=lambda *args, **kwargs: SimpleNamespace(status_code=200),
+            options=lambda *args, **kwargs: SimpleNamespace(status_code=200),
+        )
+        self.api.compatibility["hashPath"] = app.HASH_PATH_CANDIDATES[0]
+
         res = self.api.scan_file(str(sample))
         self.assertTrue(res["ok"])
         self.assertEqual(res["status"], "SAFE")
 
         reports = self.api.get_reports()
         self.assertEqual(reports["summary"]["totalScanned"], 1)
+
+    def test_pause_and_resume(self):
+        self.assertFalse(self.api.pause_event.is_set())
+        self.api.pause_all_scans()
+        self.assertTrue(self.api.pause_event.is_set())
+        self.api.resume_all_scans()
+        self.assertFalse(self.api.pause_event.is_set())
 
     def test_schedule_validation(self):
         bad = self.api.schedule_scan("file", "/nope/file", "daily", 6)
