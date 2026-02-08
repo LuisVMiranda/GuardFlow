@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GuardFlow</title>
+    <style>
+      :root {
+        --bg: #0f1115;
+        --card: #171a21;
+        --text: #e8eef8;
+        --muted: #9db0cc;
+        --accent: #5ea0ff;
+        --border: #2a3140;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f6f8fc;
+          --card: #ffffff;
+          --text: #1f2937;
+          --muted: #6b7280;
+          --accent: #2563eb;
+          --border: #e5e7eb;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, Segoe UI, Roboto, system-ui, sans-serif;
+      }
+      .app {
+        max-width: 1080px;
+        margin: 24px auto;
+        padding: 16px;
+      }
+      .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+      .tab-btn {
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .tab-btn.active { border-color: var(--accent); }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .hidden { display: none; }
+      .subtitle { color: var(--muted); }
+      .dropzone {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        padding: 28px;
+        text-align: center;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <h1>🛡️ GuardFlow</h1>
+      <p class="subtitle">Privacy-first local malware scanning workspace (project scaffold).</p>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="scan">Scan</button>
+        <button class="tab-btn" data-tab="schedule">Schedule</button>
+        <button class="tab-btn" data-tab="reports">Reports</button>
+      </div>
+
+      <section id="tab-scan" class="card">
+        <h2>Scan</h2>
+        <p class="subtitle">Hash-only by default. Upload happens only after explicit deep-scan action.</p>
+        <div class="dropzone">Drop file here (full integration to be added next).</div>
+      </section>
+
+      <section id="tab-schedule" class="card hidden">
+        <h2>Schedule</h2>
+        <p class="subtitle">Daily / Weekly / Every X Hours scheduler UI placeholder.</p>
+      </section>
+
+      <section id="tab-reports" class="card hidden">
+        <h2>Reports</h2>
+        <p class="subtitle">30-day summary and event log placeholder.</p>
+      </section>
+    </div>
+
+    <script>
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          ['scan', 'schedule', 'reports'].forEach((tab) => {
+            document.getElementById(`tab-${tab}`).classList.add('hidden');
+          });
+          document.getElementById(`tab-${btn.dataset.tab}`).classList.remove('hidden');
+        });
+      });
+    </script>
+  </body>
+</html>
