@@ -45,3 +45,15 @@ MalwareZoo route names vary by deployment. This app uses:
 - `POST /api/upload` multipart file upload
 
 If your local MalwareZoo uses different routes, edit constants in `guardflow_app.py`.
+
+
+## Windows double-click launcher
+Use `start_guardflow.bat` to run GuardFlow without opening a terminal:
+
+1. Double-click `start_guardflow.bat`.
+2. The launcher will:
+   - pick `py -3` or `python`
+   - optionally run `docker compose up -d` (if Docker exists)
+   - start `guardflow_app.py`
+
+If Python is missing, the script will show an error and pause so you can read it.
