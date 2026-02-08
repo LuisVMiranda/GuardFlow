@@ -60,6 +60,7 @@ If Python is missing, the script will show an error and pause so you can read it
 
 
 ## Troubleshooting: "file path is invalid or not accessible"
+- If you see `WinError 10061` / connection refused during lookup, MalwareZoo is not running on `127.0.0.1:8080`; start it with `docker compose up -d` or set `GUARDFLOW_MALWAREZOO_URL`.
 If PDF/ZIP scans show the same red path error:
 - Use **Browse…** in the Scan tab instead of drag-drop (some runtimes do not expose absolute path on dropped files).
 - Confirm the path is absolute and file exists.

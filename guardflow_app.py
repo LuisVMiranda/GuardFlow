@@ -13,6 +13,7 @@ import subprocess
 import sys
 import threading
 import time
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Callable
 
@@ -150,6 +151,9 @@ class GuardFlowAPI:
             t.start()
             self.workers.append(t)
 
+        self.active_scan_count = 0
+        self.active_scan_lock = threading.Lock()
+
         self.compatibility = self._probe_malwarezoo_compatibility()
 
     def _worker_loop(self) -> None:
@@ -231,11 +235,23 @@ class GuardFlowAPI:
 
         return info
 
+    @contextmanager
+    def _scan_activity(self):
+        with self.active_scan_lock:
+            self.active_scan_count += 1
+        try:
+            yield
+        finally:
+            with self.active_scan_lock:
+                self.active_scan_count = max(0, self.active_scan_count - 1)
+
     def get_backend_status(self) -> dict[str, Any]:
         return {
             "ok": True,
             "compatibility": self.compatibility,
             "queueSize": self.queue.qsize(),
+            "activeScans": self.active_scan_count,
+            "hasOngoingScans": self.active_scan_count > 0 or self.queue.qsize() > 0,
             "paused": self.pause_event.is_set(),
             "throttle": {
                 "systemDelaySec": THROTTLE_SYSTEM_DELAY_S,
@@ -281,6 +297,12 @@ class GuardFlowAPI:
                     return "ERROR", f"Hash lookup failed (HTTP {resp.status_code}) at {hash_path}"
                 payload = resp.json() if resp.content else {}
             except Exception as exc:
+                msg = str(exc)
+                if "WinError 10061" in msg or "Failed to establish a new connection" in msg or "Connection refused" in msg:
+                    return (
+                        "ERROR",
+                        f"MalwareZoo is unreachable at {MALWAREZOO_BASE_URL} ({msg}). Start Docker and run: docker compose up -d",
+                    )
                 return "ERROR", f"Lookup unavailable: {exc}"
 
             verdict = str(payload.get("verdict", "unknown")).lower()
@@ -301,9 +323,10 @@ class GuardFlowAPI:
                     "error": "File path is invalid or not accessible. Use the Browse button and pick a local file path.",
                 }
 
-            self._wait_if_paused()
-            file_hash = sha256_file(file_path)
-            status, detail = self._call_hash_lookup(file_hash)
+            with self._scan_activity():
+                self._wait_if_paused()
+                file_hash = sha256_file(file_path)
+                status, detail = self._call_hash_lookup(file_hash)
             self._log_scan(file_path, file_hash, status, detail, "manual")
             self._cleanup_old_logs()
             return {"ok": True, "file": file_path, "sha256": file_hash, "status": status, "detail": detail, "canDelete": status == "THREAT"}
@@ -382,19 +405,20 @@ class GuardFlowAPI:
 
         throttle_delay = THROTTLE_SYSTEM_DELAY_S if target_type == "system" else THROTTLE_FOLDER_DELAY_S
 
-        for file_path in iter_target_files():
-            self._wait_if_paused()
-            try:
-                if not os.path.isfile(file_path):
-                    continue
-                file_hash = sha256_file(file_path)
-                status, detail = self._call_hash_lookup(file_hash)
-                self._log_scan(file_path, file_hash, status, detail, source)
-                scanned_count += 1
-                if throttle_delay > 0:
-                    time.sleep(throttle_delay)
-            except Exception as exc:
-                self._log_scan(file_path, "", "ERROR", str(exc), source)
+        with self._scan_activity():
+            for file_path in iter_target_files():
+                self._wait_if_paused()
+                try:
+                    if not os.path.isfile(file_path):
+                        continue
+                    file_hash = sha256_file(file_path)
+                    status, detail = self._call_hash_lookup(file_hash)
+                    self._log_scan(file_path, file_hash, status, detail, source)
+                    scanned_count += 1
+                    if throttle_delay > 0:
+                        time.sleep(throttle_delay)
+                except Exception as exc:
+                    self._log_scan(file_path, "", "ERROR", str(exc), source)
 
         self._cleanup_old_logs()
         return scanned_count

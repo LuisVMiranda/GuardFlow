@@ -35,6 +35,31 @@ class GuardFlowTests(unittest.TestCase):
         reports = self.api.get_reports()
         self.assertEqual(reports["summary"]["totalScanned"], 1)
 
+
+    def test_backend_status_no_ongoing_by_default(self):
+        status = self.api.get_backend_status()
+        self.assertTrue(status["ok"])
+        self.assertFalse(status["hasOngoingScans"])
+
+    def test_lookup_connection_refused_message(self):
+        sample = Path(self.tmp.name) / "sample2.bin"
+        sample.write_bytes(b"abc")
+
+        def raise_conn(*args, **kwargs):
+            raise RuntimeError("WinError 10061 Failed to establish a new connection")
+
+        self.api.requests = SimpleNamespace(
+            post=raise_conn,
+            get=lambda *args, **kwargs: SimpleNamespace(status_code=200),
+            options=lambda *args, **kwargs: SimpleNamespace(status_code=200),
+        )
+        self.api.compatibility["hashPath"] = app.HASH_PATH_CANDIDATES[0]
+
+        res = self.api.scan_file(str(sample))
+        self.assertTrue(res["ok"])
+        self.assertEqual(res["status"], "ERROR")
+        self.assertIn("MalwareZoo is unreachable", res["detail"])
+
     def test_pause_and_resume(self):
         self.assertFalse(self.api.pause_event.is_set())
         self.api.pause_all_scans()
