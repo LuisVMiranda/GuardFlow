@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  malwarezoo:
+    image: malwarezoo/local:latest
+    container_name: malwarezoo
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
